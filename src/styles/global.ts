@@ -4,6 +4,7 @@ import background from "../images/background.png";
 export const AppColors = {
   gray: "#212529",
   purple: "slateblue",
+  transparent_purple:`rgba(106, 90, 205, 0.45)`,
   cream: "gainsboro",
   orange: "darkorange",
   grayGlass: `rgba(33,33,33,0.93)`,

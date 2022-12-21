@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const path = require("path");
 const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 
 const rules = [
@@ -75,9 +76,12 @@ module.exports = () => {
   return {
     mode,
     plugins:[
+      new Dotenv({
+        path:"./.env"
+      }),
       new HtmlWebpackPlugin({
         template: "./src/index.html",
-      }),
+      })
     ],
     entry: "./src/index.js",
     module: { rules },

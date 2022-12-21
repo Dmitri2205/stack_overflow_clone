@@ -1,55 +1,43 @@
-import React from "react";
-import { createPortal } from "react-dom";
-import {
-  Header as Head,
-  Burger
-} from "@modules/header/HeaderStyle";
-import { Container, Nav, Navbar } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
-import TeleportedButton from "../../portals/BackButton";
-import backButton from '@icons/back_button.svg';
+import React, { useEffect, useState } from "react";
+import { Head, Profile, Search, SearchButton, SearchWraper } from "./HeaderStyle";
+import { Link } from "react-router-dom";
+import { api } from '@API';
+import { useAppDispatch } from '@hooks/index';
+import {questionsSlice}  from "../../store/reducers/QuestionsSlice";
 
-interface HeaderProps {
-  isLogedIn?: boolean;
-  menuOpened: boolean;
-  setMenuOpened: (isMenuOpened: boolean) => void;
-  children?: React.ReactNode;
-}
+const Header = (props: any) => {
+
+  const {setQuestions} = questionsSlice.actions;
+const dispatch = useAppDispatch();
 
 
-const Header: React.FC<HeaderProps> = ({
-  setMenuOpened,
-  menuOpened,
-  children,
-}) => {
-  const {pathname}  = useLocation();
+  const [searchString,setsearchString] = useState<string>("");
 
-  const menuHandler = (): void => {
-    setMenuOpened(!menuOpened);
-  };
+  const searchInputHandler = (e:any) => {
+    const value = e.target.value;
+    setTimeout(()=>{
+      setsearchString(value);
+    },350)
+  }
 
-  const navigate = useNavigate();
-
-  const backButtonHandler = (e: React.MouseEvent<HTMLElement>) => {
-    navigate(-1)
-  };
+  const search = async (e:any) => {
+    if(e.type === "keypress" && e.code === "Enter" || e.type === "click" && searchString.length !== 0){
+      const {data}:any = await api.getQuestions(searchString);
+      dispatch(setQuestions(data));
+    }
+  }
 
   return (
     <Head>
-      <Navbar bg="dark" variant="dark">
-          <Burger onClick={menuHandler} menuOpened={menuOpened}>
-            <span></span>
-          </Burger>
-          {
-            pathname !== "/" ?
-            <TeleportedButton clickHandler={backButtonHandler}>
-            <img src={backButton} alt="back_button"/>
-          </TeleportedButton>
-          :
-          null
-          }
-      </Navbar>
-      {children}
+      <SearchWraper data-type="custom-input-wraper">
+        <Search 
+          placeholder="Type serach query"
+          onChange={(e:React.ChangeEvent<HTMLInputElement>)=>{searchInputHandler(e)}}
+          onKeyPress={(e:React.KeyboardEvent<HTMLInputElement>)=>{search(e)}}
+        />
+        <SearchButton onClick={(e:React.MouseEvent<HTMLButtonElement, MouseEvent>)=>{search(e)}}>Go!</SearchButton>
+      </SearchWraper>
+      {/* <Profile></Profile> */}
     </Head>
   );
 };
