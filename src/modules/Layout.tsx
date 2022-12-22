@@ -14,7 +14,7 @@ export const Layout = () => {
                 <Route path="/questions" element={<p>questions</p>}/>
                 <Route path="/tags" element={<p>tags</p>}/>
             </Routes>
-            <Footer/>
+            {/* <Footer/> */}
         </LayoutWrapper>
     )
 }

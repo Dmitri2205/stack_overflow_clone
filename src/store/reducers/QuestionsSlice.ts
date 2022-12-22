@@ -45,20 +45,23 @@ const initialState:IQuestionsState = {
   loading: "idle",
 };
 
-// const getQuestions = async (data: any):Promise<any> => {
-    //    return api.getQuestionsRequest(data.some_param)
-    //   .then((res: any) => {
-        
-        //     })
-        //     .catch(()=>{
-            //         throw new Error("error.message");
-            //     });
-// };
+const requestQuestions = async (question: string):Promise<any> => {
+       return api.getQuestions(question)
+      .then((res: any) => {
+        if(!res){
+          throw new Error("request failed");
+        }
+        return(res.data)
+        })
+        .catch((e)=>{
+                throw new Error(e.message);
+        });
+};
 
-// export const loadStores = createAsyncThunk(
-//     "questions/getQuestions",
-//     async (data: any,thunkApi) => getQuestions(data)
-// );
+export const loadQuestions = createAsyncThunk(
+    "questions/getQuestions",
+    async (queryString: string,thunkApi) => requestQuestions(queryString)
+);
 
 export const questionsSlice = createSlice({
     name: "questions",
@@ -68,18 +71,19 @@ export const questionsSlice = createSlice({
       state.questionsData = action.payload;
     },
   },
-  // extraReducers: (builder) => {
-  //     builder
-  //     .addCase(loadStores.fulfilled,(state,action) => {
-  //         state.stores = action.payload;
-  //     })
-  //     .addCase(loadStores.rejected,(state,action) => {
-
-  //     })
-  //     .addCase(loadStores.pending,(state,action) => {
-
-  //     })
-  // }
+  extraReducers: (builder) => {
+    builder
+    .addCase(loadQuestions.fulfilled,(state,action) => {
+      state.questionsData = action.payload;
+      state.loading = "loaded";
+      })
+      .addCase(loadQuestions.rejected,(state,action) => {
+        state.loading = "rejected"
+      })
+      .addCase(loadQuestions.pending,(state,action) => {
+        state.loading = "pending";
+      })
+  }
 });
 
 export default questionsSlice.reducer;

@@ -3,11 +3,10 @@ import { Head, Profile, Search, SearchButton, SearchWraper } from "./HeaderStyle
 import { Link } from "react-router-dom";
 import { api } from '@API';
 import { useAppDispatch } from '@hooks/index';
-import {questionsSlice}  from "../../store/reducers/QuestionsSlice";
+import { loadQuestions } from '../../store/reducers/QuestionsSlice';
 
 const Header = (props: any) => {
 
-  const {setQuestions} = questionsSlice.actions;
 const dispatch = useAppDispatch();
 
 
@@ -22,8 +21,7 @@ const dispatch = useAppDispatch();
 
   const search = async (e:any) => {
     if(e.type === "keypress" && e.code === "Enter" || e.type === "click" && searchString.length !== 0){
-      const {data}:any = await api.getQuestions(searchString);
-      dispatch(setQuestions(data));
+      dispatch(loadQuestions(searchString));
     }
   }
 
